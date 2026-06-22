@@ -1,0 +1,28 @@
+{
+  "aws": {
+    "bucket_name": "maaz-animal-classifier-v2"
+  },
+
+  "data": {
+    "dataset_prefix": "data/sample",
+    "local_dataset_dir": "/tmp/data"
+  },
+
+  "artifacts": {
+    "local_dir": "/tmp/artifacts",
+    "s3_prefix": "artifacts/models/v1"
+  },
+
+  "training": {
+    "train_ratio": 0.8,
+    "random_seed": 42,
+    "image_size": 128,
+    "batch_size": 16,
+    "learning_rate": 0.0001,
+    "epochs": 2,
+    "model_name": "resnet18"
+  }
+
+
+
+}

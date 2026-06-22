@@ -1,0 +1,11 @@
+{
+  "aws": {
+    "bucket_name": "maaz-animal-classifier-v2"
+  },
+
+  "model": {
+    "version": "v1",
+    "s3_artifact_prefix": "artifacts/models",
+    "local_artifact_dir": "/tmp/artifacts"
+  }
+}
