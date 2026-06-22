@@ -1,0 +1,14 @@
+virt/
+venv/
+__pycache__/
+
+*.pyc
+*.pyo
+
+tmp/
+data/
+
+artifacts/
+
+.git/
+.gitignore

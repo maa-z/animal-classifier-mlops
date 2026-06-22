@@ -1,0 +1,17 @@
+virt/
+venv/
+__pycache__/
+
+*.pyc
+*.pyo
+
+tmp/
+data/
+
+artifacts/
+
+.git/
+.gitignore
+
+# it is outside the docker parent folder so no need just put if it was inside the docker parent folder 
+data_to_upload_on_s3_awsS3CpThisLocatonSpaceS3Location/
