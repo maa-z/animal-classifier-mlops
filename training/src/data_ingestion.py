@@ -3,7 +3,7 @@ import boto3
 
 
 def download_dataset_from_s3(
-    bucket_name: str,# "maaz-animal-classifier-v2"
+    bucket_name: str,# "maaz-animal-classifier-v3"
     s3_prefix: str,  # "data/raw/dataset"
     local_dir: str   # "/tmp/data"
 ):
@@ -67,7 +67,7 @@ def download_dataset_from_s3(
             )
 
             s3_client.download_file(
-                bucket_name,    # "maaz-animal-classifier-v2"
+                bucket_name,    # "maaz-animal-classifier-v3"
                 s3_key,         # "data/raw/dataset/Cat/1.jpg"
                 local_file_path # "/tmp/data/Cat/1.jpg"
             )
@@ -103,7 +103,7 @@ def download_dataset_from_s3(
 # When we call:
 
 # response = s3_client.list_objects_v2(
-#     Bucket="maaz-animal-classifier-v2",
+#     Bucket="maaz-animal-classifier-v3",
 #     Prefix="data/raw/dataset"
 # )
 

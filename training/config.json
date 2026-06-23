@@ -4,7 +4,7 @@
   },
 
   "data": {
-    "dataset_prefix": "data/sample",
+    "dataset_prefix": "data",
     "local_dataset_dir": "/tmp/data"
   },
 
