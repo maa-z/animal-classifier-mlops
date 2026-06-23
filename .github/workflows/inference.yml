@@ -72,6 +72,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'inference/**'
 
 env:
   AWS_REGION: ap-south-1
