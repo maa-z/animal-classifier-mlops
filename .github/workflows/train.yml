@@ -69,7 +69,14 @@ jobs:
           docker pull \
             $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
+          CREDS=$(aws configure export-credentials --format env)
+          eval "$CREDS"
+
           docker run --rm \
+            --env AWS_ACCESS_KEY_ID \
+            --env AWS_SECRET_ACCESS_KEY \
+            --env AWS_SESSION_TOKEN \
+            --env AWS_DEFAULT_REGION=$AWS_REGION \
             $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
           docker image prune -af
