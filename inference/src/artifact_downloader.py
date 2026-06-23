@@ -1,7 +1,7 @@
 import os
 import boto3
 
-
+# load artifacts from s3 to local directory for inference
 def download_artifacts(config):
 
     bucket_name = config["aws"]["bucket_name"]
