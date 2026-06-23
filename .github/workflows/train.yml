@@ -1,0 +1,77 @@
+name: Train Model
+
+on:
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-south-1
+  AWS_ACCOUNT_ID: 956076205820
+  ECR_REPOSITORY: animal-classifier-train
+
+jobs:
+  build-push-train:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set Image Tag
+        run: |
+          echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login To ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Training Image
+        run: |
+          docker build \
+            -t $ECR_REPOSITORY:$IMAGE_TAG \
+            ./training
+
+      - name: Tag Training Image
+        run: |
+          docker tag \
+            $ECR_REPOSITORY:$IMAGE_TAG \
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Push Training Image
+        run: |
+          docker push \
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Create SSH Key
+        run: |
+          cat << 'EOF' > private_key.pem
+          ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          EOF
+          chmod 600 private_key.pem
+
+      - name: Run Training On EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no \
+            -i private_key.pem \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+
+          aws ecr get-login-password \
+            --region $AWS_REGION | docker login \
+            --username AWS \
+            --password-stdin \
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+          docker pull \
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+          docker run --rm \
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+          docker image prune -af
+
+          EOF
