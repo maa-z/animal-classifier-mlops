@@ -1,4 +1,4 @@
-name: Train Model
+name: Build Training Image
 
 on:
   workflow_dispatch:
@@ -9,10 +9,13 @@ env:
   ECR_REPOSITORY: animal-classifier-train
 
 jobs:
-  build-push-train:
+
+  build-push-image:
+
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -45,39 +48,6 @@ jobs:
       - name: Push Training Image
         run: |
           docker push \
-            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Create SSH Key
-        run: |
-          cat << 'EOF' > private_key.pem
-          ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          EOF
-          chmod 600 private_key.pem
-
-      - name: Run Training On EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no \
-            -i private_key.pem \
-            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-
-          aws ecr get-login-password \
-            --region $AWS_REGION | docker login \
-            --username AWS \
-            --password-stdin \
-            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-
-          docker pull \
-            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-
-          docker run --rm \
-            --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-            --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-            --env AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
-            --env AWS_DEFAULT_REGION=$AWS_REGION \
-            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-
-          docker container prune -f
-          docker image prune -af
-          docker builder prune -af
+            $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAGr builder prune -af
 
           EOF

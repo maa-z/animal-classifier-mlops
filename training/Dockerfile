@@ -8,4 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "train.py"]
+# CMD ["python", "train.py"]
+
+ENTRYPOINT ["python", "train.py"]  
+# for sagemaker 
